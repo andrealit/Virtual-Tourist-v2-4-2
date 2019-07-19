@@ -23,7 +23,7 @@ class CoreDataViewController: UIViewController, UICollectionViewDelegate {
     var delete = [IndexPath]()
     var insert = [IndexPath]()
     
-    var fetchedResultController: NSFetchedResultsController<Images>?
+    var fetchedResultController : NSFetchedResultsController<Images>?
     
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)

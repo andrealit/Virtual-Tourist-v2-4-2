@@ -46,8 +46,8 @@ class FlickrViewController: CoreDataViewController, MKMapViewDelegate, UICollect
     
     func setup() {
         mapView.isUserInteractionEnabled = true
-       
         self.collectionButton.isEnabled = false
+        
         self.collectionView.delegate = self
         self.collectionView.dataSource = self
         
@@ -64,27 +64,31 @@ class FlickrViewController: CoreDataViewController, MKMapViewDelegate, UICollect
         mapView.setRegion(region, animated: true)
     }
     
-    func obtainURLs(_ completion: @escaping(_ obtained: Bool, _ error: String?) -> Void) {
-        let flickr = FlickrData()
-        flickr.obtainData(longitude: self.point.longitude, latitude: self.point.latitude, page: Int32(arc4random_uniform(50)), completion: {
-            error, urlArray in
-            
-            if error != nil {
-                completion(false, error)
-                return
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        setup()
+        let fetchRequest = NSFetchRequest<Images>(entityName: "Images")
+        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "pin", ascending: true)]
+        let predic = NSPredicate(format: "pin = %@", argumentArray: [self.point])
+        fetchRequest.predicate = predic
+        fetchedResultController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: (delegate.stack.context), sectionNameKeyPath: nil, cacheName: nil)
+        self.fetchedResultController?.delegate = self
+        self.startSearch()
+        if (point.image?.count)! < 1 {
+            self.obtainUrls() {
+                (obtained, error) in DispatchQueue.main.async {
+                    self.collectionButton.isEnabled = true
+                }
+                if (obtained == false) {
+                    DispatchQueue.main.async {
+                        self.alertError(error: error!)
+                    }
+                }
+                try! self.delegate.stack.saveContext()
             }
-            
-            if urlArray?.count == 0 {
-                completion(false, "ERROR: No data found!")
-                return
-            }
-            
-            for index in urlArray! {
-                let image = Images(image: nil, point: self.point, context: (self.fetchedResultController?.managedObjectContext)!)
-                image.url = index
-            }
-            completion(true, nil)
-        })
+        } else {
+            self.collectionButton.isEnabled = true
+        }
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {

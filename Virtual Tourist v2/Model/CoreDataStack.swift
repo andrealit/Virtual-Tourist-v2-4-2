@@ -11,6 +11,7 @@ import CoreData
 // MARK: CoreDataStack
 
 struct CoreDataStack {
+    
     // MARK: Properties
     
     private let model: NSManagedObjectModel
@@ -23,9 +24,9 @@ struct CoreDataStack {
     
     init?(modelName: String) {
         
-        // Assuming model is in the main bundle
+        // Assumes the model is in the main bundle
         guard let modelURL = Bundle.main.url(forResource: modelName, withExtension: "momd") else {
-            print("unable to find \(modelName)")
+            print("Unable to find \(modelName) in the main bundle")
             return nil
         }
         self.modelURL = modelURL
@@ -37,24 +38,25 @@ struct CoreDataStack {
         }
         self.model = model
         
+        // Create the store coordinator
         coordinator = NSPersistentStoreCoordinator(managedObjectModel: model)
         
-        // creates context and connects to coordinator
+        // create a context and add connect it to the coordinator
         context = NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
         context.persistentStoreCoordinator = coordinator
         
-        // Add SQLite store located in documents folder
+        // Add a SQLite store located in the documents folder
         let fm = FileManager.default
         
-        guard let docURL = fm.urls(for: .documentDirectory, in: .userDomainMask).first else {
-            print("Unable to reach documents folder")
+        guard let docUrl = fm.urls(for: .documentDirectory, in: .userDomainMask).first else {
+            print("Unable to reach the documents folder")
             return nil
         }
         
-        self.dbURL = docURL.appendingPathComponent("model.sqlite")
+        self.dbURL = docUrl.appendingPathComponent("model.sqlite")
         
-        // migration
-        let options = [NSInferMappingModelAutomaticallyOption: true, NSMigratePersistentStoresAutomaticallyOption: true]
+        // Options for migration
+        let options = [NSInferMappingModelAutomaticallyOption: true,NSMigratePersistentStoresAutomaticallyOption: true]
         
         do {
             try addStoreCoordinator(NSSQLiteStoreType, configuration: nil, storeURL: dbURL, options: options as [NSObject : AnyObject]?)
@@ -65,32 +67,34 @@ struct CoreDataStack {
     
     // MARK: Utils
     
-    func addStoreCoordinator(_ storeType: String, configuration: String?, storeURL: URL, options: [NSObject:AnyObject]?) throws {
+    func addStoreCoordinator(_ storeType: String, configuration: String?, storeURL: URL, options : [NSObject:AnyObject]?) throws {
         try coordinator.addPersistentStore(ofType: NSSQLiteStoreType, configurationName: nil, at: dbURL, options: nil)
     }
-
 }
 
-// MARK: CoreDataStack (Remove Data)
+// MARK: - CoreDataStack (Removing Data)
 
-internal extension CoreDataStack {
+internal extension CoreDataStack  {
+    
     func dropAllData() throws {
-        try coordinator.destroyPersistentStore(at: dbURL, ofType: NSSQLiteStoreType, options: nil)
+        // delete all the objects in the db. This won't delete the files, it will
+        // just leave empty tables.
+        try coordinator.destroyPersistentStore(at: dbURL, ofType:NSSQLiteStoreType , options: nil)
         try addStoreCoordinator(NSSQLiteStoreType, configuration: nil, storeURL: dbURL, options: nil)
     }
 }
 
-
-// MARK: CoreDataStack (Save Data)
+// MARK: - CoreDataStack (Save Data)
 
 extension CoreDataStack {
+    
     func saveContext() throws {
         if context.hasChanges {
             try context.save()
         }
     }
     
-    func autoSave(_ delayInSeconds: Int) {
+    func autoSave(_ delayInSeconds : Int) {
         if delayInSeconds > 0 {
             do {
                 try saveContext()

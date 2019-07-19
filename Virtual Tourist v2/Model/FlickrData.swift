@@ -16,7 +16,7 @@ struct FlickrData {
     
     func obtainData(longitude: Double, latitude: Double, page: Int32, completion: @escaping (_ error: String?, _ data: [String]?) -> ()) {
         
-        let baseURL = "https://api.flickr.com/services/rest?page=\(page)&method=flickr.photos.search&format=json&api_key=4e17e4dda249815c53b3700489d74270&bbox=\(convert(Latitude: latitude, Longitude: longitude))&extras=url_m&nojsoncallback=1"
+        let baseURL = "https://api.flickr.com/services/rest?page=\(page)&method=flickr.photos.search&format=json&api_key=4e17e4dda249815c53b3700489d74270&bbox=\(bBox(Latitude: latitude, Longitude: longitude))&extras=url_m&nojsoncallback=1"
         
         let session = URLSession.shared
         let task = session.dataTask(with: URL(string: baseURL)!) {
@@ -46,7 +46,7 @@ struct FlickrData {
         task.resume()
     }
     
-    func convert(Latitude: Double, Longitude: Double)-> String {
+    func bBox(Latitude: Double, Longitude: Double)-> String {
         let minLong = min(Longitude + 1, 180)
         let maxLong = max(Longitude - 1, -180)
         let minLat = min(Latitude + 1, 90)
