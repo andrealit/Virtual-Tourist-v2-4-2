@@ -74,6 +74,7 @@ extension VirtualTouristViewController {
     func firstSetup() {
         mapView.delegate = self
         
+        // long-press gesture, creating pin location
         let gesture = UILongPressGestureRecognizer(target: self, action: #selector(addpin(_: )))
         gesture.delegate = self
         gesture.minimumPressDuration = 0.5

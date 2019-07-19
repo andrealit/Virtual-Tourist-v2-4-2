@@ -9,6 +9,7 @@
 import Foundation
 import UIKit
 
+// Code for downloading images from Flickr encapsulated separate from View Controller.
 struct FlickrData {
     let scheme = "https"
     let host = "api.flickr.com"

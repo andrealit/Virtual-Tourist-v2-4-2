@@ -77,7 +77,7 @@ struct CoreDataStack {
 internal extension CoreDataStack  {
     
     func dropAllData() throws {
-        // delete all the objects in the db. This won't delete the files, it will
+        // deletes all the objects in the db. This won't delete the files, it will
         // just leave empty tables.
         try coordinator.destroyPersistentStore(at: dbURL, ofType:NSSQLiteStoreType , options: nil)
         try addStoreCoordinator(NSSQLiteStoreType, configuration: nil, storeURL: dbURL, options: nil)

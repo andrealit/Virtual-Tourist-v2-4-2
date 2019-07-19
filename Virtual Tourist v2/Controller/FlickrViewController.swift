@@ -44,6 +44,7 @@ class FlickrViewController: CoreDataViewController, MKMapViewDelegate, UICollect
         }
     }
     
+    // prepares collection view and sets mapview in scene to include annotated pins
     func setup() {
         mapView.isUserInteractionEnabled = true
         self.collectionButton.isEnabled = false

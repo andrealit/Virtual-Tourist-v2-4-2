@@ -112,8 +112,8 @@
 		F42B78C022E0DCEA001D7D68 /* Controller */ = {
 			isa = PBXGroup;
 			children = (
-				F42B78AA22E0DCA8001D7D68 /* FlickrViewController.swift */,
 				F42B78CE22E12460001D7D68 /* VirtualTouristViewController.swift */,
+				F42B78AA22E0DCA8001D7D68 /* FlickrViewController.swift */,
 				F42B78CC22E123C2001D7D68 /* CoreDataViewController.swift */,
 				F42B78D022E124E1001D7D68 /* CollectionViewCell.swift */,
 			);
