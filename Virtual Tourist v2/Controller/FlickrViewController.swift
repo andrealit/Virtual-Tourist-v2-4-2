@@ -35,7 +35,7 @@ class FlickrViewController: CoreDataViewController, MKMapViewDelegate, UICollect
                 self.collectionButton.isEnabled = true
             }
             
-            if obtained == false {
+            if !obtained {
                 DispatchQueue.main.async {
                     self.alertError(error: error!)
                 }
@@ -48,9 +48,6 @@ class FlickrViewController: CoreDataViewController, MKMapViewDelegate, UICollect
     func setup() {
         mapView.isUserInteractionEnabled = true
         self.collectionButton.isEnabled = false
-        
-        self.collectionView.delegate = self
-        self.collectionView.dataSource = self
         
         let coordinate2D  = CLLocationCoordinate2D(latitude: (self.point?.latitude)!, longitude: (self.point?.longitude)!)
         
@@ -70,8 +67,8 @@ class FlickrViewController: CoreDataViewController, MKMapViewDelegate, UICollect
         setup()
         let fetchRequest = NSFetchRequest<Images>(entityName: "Images")
         fetchRequest.sortDescriptors = [NSSortDescriptor(key: "pin", ascending: true)]
-        let predic = NSPredicate(format: "pin = %@", argumentArray: [self.point])
-        fetchRequest.predicate = predic
+        let predicate = NSPredicate(format: "pin = %@", argumentArray: [self.point])
+        fetchRequest.predicate = predicate
         fetchedResultController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: (delegate.stack.context), sectionNameKeyPath: nil, cacheName: nil)
         self.fetchedResultController?.delegate = self
         self.startSearch()
@@ -80,7 +77,7 @@ class FlickrViewController: CoreDataViewController, MKMapViewDelegate, UICollect
                 (obtained, error) in DispatchQueue.main.async {
                     self.collectionButton.isEnabled = true
                 }
-                if (obtained == false) {
+                if !obtained {
                     DispatchQueue.main.async {
                         self.alertError(error: error!)
                     }
